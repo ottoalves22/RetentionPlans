@@ -1,47 +1,54 @@
 from datetime import date, datetime
 
 class Ruler:
-    """
-    plan_type: 'standard', 'gold', or 'platinum'
-    snpsht_date: must be in format dd/mm/yy
-    """
-    def __init__(self, plan_type: str, expiration_date: str) -> None:
+    def __init__(self, plan_type: str, expiration_date: str):
+        """
+        plan_type: 'standard', 'gold', or 'platinum'
+        snpsht_date: must be in format dd/mm/yy
+        """
         plan_type = plan_type.lower()
         expiration_date = datetime.strptime(expiration_date, '%d/%m/%Y').date()
+        retained = "The referred snapshot is retained."
+        deleted = "The referred snapshot is deleted."
+
         match plan_type:
             case "standard":
                 # 42 days
-                day = self.check_period_daily(expiration_date, 42) # for each snapshot of the day
+                day = self.check_period(expiration_date, 42) # for each snapshot of the day
+                if day is False:
+                    print(deleted)
+                else:
+                    print(retained)
             case "gold":
-                # 42 days + 12 moths (372 days) ~= 414 days total
-                day =self.check_period_daily(expiration_date, 42) # for each snapshot of the day
-                month = self.check_period_mothly(expiration_date, 372) # for the last snapshot of month
+                # 42 days + 12 months (~372 days) ~= 414 days total
+                day =self.check_period(expiration_date, 42) # for each snapshot of the day
+                month = self.check_period(expiration_date, 372) # for the last snapshot of month
+                if day is False and month is False:
+                    print(deleted)
+                else:
+                    print(retained)
             case "platinum":
-                # 42 days + 12 months (372 days) + 7 years (2604 days) ~= 2646 days total
-                day = self.check_period_daily(expiration_date, 42) # for each snapshot of the day
-                month = self.check_period_mothly(expiration_date, 372) # for the last snapshot of month
-                year = self.check_period_yearly(expiration_date, 2604) # for the last snapshot of year
-
-    """ 
-    If any of these bellow return true, there is a snapshot. If it returns false, it doesnt.
-    Also, all of them could be resumed in one function where it would get by parameter the length in days to each case, X days, months or years
-    and a list of snapshots taken by that ERP instance in the said period etc.
-    But they are broke down in three for simplification of cases, since there is no list, id or traceable relations. 
-    """
-                
-    def check_period_daily(self, target_date, retention_days) -> bool:
-        # will not be using -3 UTC
-        today = date.today()#.strftime('%d/%m/%Y')
+                # 42 days + 12 months (~372 days) + 7 years (~2604 days) ~= 2646 days total
+                day = self.check_period(expiration_date, 42) # for each snapshot of the day
+                month = self.check_period(expiration_date, 372) # for the last snapshot of month
+                year = self.check_period(expiration_date, 2604) # for the last snapshot of year
+                if day is False and month is False and year is False:
+                    print(deleted)
+                else:
+                    print(retained)
+                    
+    def check_period(self, target_date: date, retention_days: int) -> bool:
+        """ 
+        If the function bellow return true, there is a snapshot. If it returns false, it doesnt.
+        They are called multiple times since there is difference in the storage politics for 
+        the last or different occurances of snapshots 
+        through time (last of the month for 1 year, the last of the year for 7 years).
+        Will not be using -3 UTC
+        """
+        today = date.today()
         difference_days = target_date - today
-        if difference_days <= retention_days:
+        if difference_days.days <= retention_days:
             return True
         else:
             return False
-
-    def check_period_mothly(self, target_date, retention_days) -> bool:
-        # will not be using -3 UTC
-        today = date.today().strftime('%d/%m/%Y')
-
-    def check_period_yearly(self, target_date, retention_days) -> bool:
-        # will not be using -3 UTC
-        today = date.today().strftime('%d/%m/%Y')
+        

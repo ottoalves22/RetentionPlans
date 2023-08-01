@@ -1,7 +1,8 @@
 # RetentionPlans
 Practical test simulating the retention plan of supposed snapshots of ERP instances
 
-## Problem description
+##
+ Problem description
 Task: Retention Plans:
     When we backup a specific ERP instance, we keep the snapshot copies according to the Retention Plan.
     So, if the rule of the retention plan is to keep the snapshots for 7 days, it would mean that a snapshot created today should be deleted after 7 days, and so on.
@@ -19,3 +20,6 @@ Task: Retention Plans:
            We will retain the last snapshot of the year for 7 years
 
 You need to test your code as a requirement and you can use any library you prefer.
+
+## Author's notes
+Note that for the calculations using months and therefore using years too, i've chosen to simplify the problem ignoring leap years and considering that every month has 31 days, which may cause a small deviance in the results.
