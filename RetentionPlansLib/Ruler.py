@@ -1,7 +1,7 @@
 from datetime import date, datetime
 
 class Ruler:
-    def __init__(self, plan_type: str, expiration_date: str):
+    def classify(self, plan_type: str, expiration_date: str):
         """
         plan_type: 'standard', 'gold', or 'platinum'
         snpsht_date: must be in format dd/mm/yy
