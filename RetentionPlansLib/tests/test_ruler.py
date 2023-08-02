@@ -1,16 +1,13 @@
 import pytest
 from unittest.mock import Mock, call
+from datetime import datetime
 import os
 import sys
+
 current = os.path.dirname(os.path.realpath(__file__))
- 
-# Getting the parent directory name
-# where the current directory is present.
 parent = os.path.dirname(current)
- 
-# adding the parent directory to
-# the sys.path.
 sys.path.append(parent)
+
 from Ruler import Ruler
 
 
@@ -29,7 +26,7 @@ def test_ruler_classify(mocker, capfd, test_plan, check_period_return, ret_or_de
     mock_datetime.strptime.return_value=mock_date
     mock_date.date.return_value = test_date
     mocker.patch('Ruler.datetime', mock_datetime)
-    mock_date = mocker.patch('Ruler.datetime.date', side_effect=test_date)
+    mocker.patch('Ruler.datetime.date', side_effect=test_date)
     check_period_mock = mocker.patch.object(ruler, 'check_period', return_value=check_period_return)
 
     ruler.classify(test_plan, test_date)
@@ -38,6 +35,23 @@ def test_ruler_classify(mocker, capfd, test_plan, check_period_return, ret_or_de
     assert out == ret_or_del_return
     check_period_mock.assert_has_calls(check_period_calls)
 
-def test_check_period():
+
+@pytest.mark.parametrize('tgt_dt, rtt_days, return_bool',
+                         [("30/08/2023", 42, True),
+                          ("05/12/2023", 42, False)])
+def test_check_period(mocker, tgt_dt, rtt_days, return_bool):
     ruler = Ruler()
+    # Setting the date.now() as 02/08/2023 (right now)
+    date_now_mock = Mock()
+    date_mock = Mock()
+    date_now_mock.date = date_mock
+    date_mock.today.return_value = datetime.strptime("02/08/2023", '%d/%m/%Y').date()
+    datetime_mock = mocker.patch('Ruler.datetime', side_effect=date_now_mock)
+    target_date = datetime.strptime(tgt_dt, '%d/%m/%Y').date()
+    retention_days = 42 
+    checked = ruler.check_period(target_date, rtt_days)
+    assert checked == return_bool
+
+
+
 
