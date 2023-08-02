@@ -27,5 +27,5 @@ Note that for the calculations using months and therefore using years too, i've 
 ## Local Execution
 The following script will install dependencies and run unit test cases
 ```bash
-pip install -r requirements.txt && pytest
+pip install -r requirements.txt && pytest --cov
 ```
