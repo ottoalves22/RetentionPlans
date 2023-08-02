@@ -23,3 +23,9 @@ You need to test your code as a requirement and you can use any library you pref
 
 ## Author's notes
 Note that for the calculations using months and therefore using years too, i've chosen to simplify the problem ignoring leap years and considering that every month has 31 days, which may cause a small deviance in the results.
+
+## Local Execution
+The following script will install dependencies and run unit test cases
+```bash
+pip install -r requirements.txt && pytest
+```
