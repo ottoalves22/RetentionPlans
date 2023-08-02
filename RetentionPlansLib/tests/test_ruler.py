@@ -20,9 +20,7 @@ from Ruler import Ruler
                           ("Gold", True, "The referred snapshot is retained.\n", [call("09/08/2023", 42), call("09/08/2023", 372)]),
                           ("gold", False, "The referred snapshot is deleted.\n", [call("09/08/2023", 42), call("09/08/2023", 372)]),
                           ("platInUM", True, "The referred snapshot is retained.\n", [call("09/08/2023", 42), call("09/08/2023", 372), call("09/08/2023", 2604)]),
-                          ("PlatinuM", False, "The referred snapshot is deleted.\n", [call("09/08/2023", 42), call("09/08/2023", 372), call("09/08/2023", 2604)]),
-                          ]
-                         )
+                          ("PlatinuM", False, "The referred snapshot is deleted.\n", [call("09/08/2023", 42), call("09/08/2023", 372), call("09/08/2023", 2604)]),])
 def test_ruler_classify(mocker, capfd, test_plan, check_period_return, ret_or_del_return, check_period_calls):
     test_date = "09/08/2023"
     ruler = Ruler()
@@ -32,13 +30,14 @@ def test_ruler_classify(mocker, capfd, test_plan, check_period_return, ret_or_de
     mock_date.date.return_value = test_date
     mocker.patch('Ruler.datetime', mock_datetime)
     mock_date = mocker.patch('Ruler.datetime.date', side_effect=test_date)
-    check_period_mock = mocker.patch.object(ruler, 'check_period', return_value=True)
+    check_period_mock = mocker.patch.object(ruler, 'check_period', return_value=check_period_return)
 
     ruler.classify(test_plan, test_date)
 
     out, err = capfd.readouterr()
-    assert out == "The referred snapshot is retained.\n"
+    assert out == ret_or_del_return
     check_period_mock.assert_has_calls(check_period_calls)
 
 def test_check_period():
-    pass
+    ruler = Ruler()
+
